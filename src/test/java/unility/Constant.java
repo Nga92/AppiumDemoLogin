@@ -5,7 +5,7 @@ public class Constant {
 	public static final String  gecko="C:\\DriverSelenium\\geckodriver.exe";
 	public static final String  chromedriver="C:\\DriverSelenium\\chromedriver.exe";
 	public static final String  Path_Screen="C:\\Users\\beetsoft\\eclipse-workspace\\BankGuru99\\src\\test\\java\\Screenshots\\";
-	public static final String  Path_Data=".\\..\\AppiumVoicelink\\src\\test\\java\\testData\\";
+	public static final String  Path_Data=".\\..\\ws\\src\\test\\java\\testData\\";
 	public static final String  File_DataTest="VoiceLink.xlsx";
 	public static final String  UserName="mngr139547";
 	public static final String  Pass="mamYjev";
