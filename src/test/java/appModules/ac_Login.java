@@ -21,7 +21,7 @@ public class ac_Login extends BaseClass{
 	  login.btn_fb().click();
 	  login.txt_email().sendKeys(username);
 	  login.txt_pass().sendKeys(pass);
-	  login.btn_login().click(1);
+	  login.btn_login().click();
 	  if(login.txt_err().isDisplayed()) {
 		  System.out.println("erro"+login.txt_err().getAttribute("name"));
 	  }
