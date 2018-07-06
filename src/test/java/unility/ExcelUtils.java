@@ -48,16 +48,16 @@ public class ExcelUtils {
 
 			int startRow = 1;
 
-			int startCol = 1;
+			int startCol = 0;
 
-			int ci, cj;
+			int ci,cj;
 
 			int totalRows = ExcelWSheet.getLastRowNum();
 			// int totalRows = 2;
 
 			// you can write a function as well to get Column count
 
-			int totalCols = 10;
+			int totalCols =8;
 
 			tabArray = new String[totalRows][totalCols];
 
@@ -67,7 +67,7 @@ public class ExcelUtils {
 
 				cj = 0;
 
-				for (int j = startCol; j <= totalCols; j++, cj++) {
+				for (int j = startCol; j < totalCols; j++, cj++) {
 
 					tabArray[ci][cj] = getCellData(i, j);
 
@@ -76,14 +76,6 @@ public class ExcelUtils {
 				}
 
 			}
-
-		}
-
-		catch (FileNotFoundException e) {
-
-			System.out.println("Could not read the Excel sheet");
-
-			e.printStackTrace();
 
 		}
 
@@ -99,6 +91,21 @@ public class ExcelUtils {
 
 	}
 
+	public static String getCellData1(int RowNum, int ColNum,String SheetName) throws Exception {
+
+		String value = null;
+		try {
+			FileInputStream fileOut1 = new FileInputStream(Constant.Path_Data + Constant.File_DataTest);
+			ExcelWBook = new XSSFWorkbook(fileOut1);
+			ExcelWSheet = ExcelWBook.getSheet(SheetName);
+			Row = ExcelWSheet.getRow(RowNum);
+			Cell = ExcelWSheet.getRow(RowNum).getCell(ColNum);
+			value = Cell.getStringCellValue();
+			
+		} catch (Exception e) {
+		}
+		return  value;
+	}
 	public static String getCellData(int RowNum, int ColNum) throws Exception {
 
 		try {
@@ -125,11 +132,11 @@ public class ExcelUtils {
 		}
 	}
 
-	public static void setCellData(String Result, int LastRow, int Col) throws Exception {
+	public static void setCellData(String Result, int LastRow, int Col,String SheetName) throws Exception {
 		try {
 			FileInputStream fileOut1 = new FileInputStream(Constant.Path_Data + Constant.File_DataTest);
 			ExcelWBook = new XSSFWorkbook(fileOut1);
-			ExcelWSheet = ExcelWBook.getSheet("invalidate");
+			ExcelWSheet = ExcelWBook.getSheet(SheetName);
 			XSSFRow row = ExcelWSheet.getRow(LastRow); 
 			XSSFCell cell = ExcelWSheet.getRow(LastRow).createCell(Col);
 			cell.setCellValue(Result);// Shift the cell value depending
@@ -138,7 +145,7 @@ public class ExcelUtils {
 			// Constant variables Test Data path and Test Data file name
 
 			FileOutputStream fileOut = new FileOutputStream(Constant.Path_Data + Constant.File_DataTest);
-			ExcelWSheet = ExcelWBook.getSheet("invalidate");
+			ExcelWSheet = ExcelWBook.getSheet(SheetName);
 			ExcelWBook.write(fileOut);
 			fileOut.flush();
 			fileOut.close();
@@ -151,12 +158,13 @@ public class ExcelUtils {
 	}
 	// -------------------------------------------------------------------------------
 
-	public static void setCellData_Result(String Result, int ColExcepted, int LastRow, int Col_Result)
+	public static void setCellData_Result(String Result, int ColExcepted, int LastRow, int Col_Result,String SheetName)
 			throws Exception {
 		try {
+			setExcelFile(Constant.Path_Data + Constant.File_DataTest, SheetName);
 			FileInputStream fileOut1 = new FileInputStream(Constant.Path_Data + Constant.File_DataTest);
 			ExcelWBook = new XSSFWorkbook(fileOut1);
-			ExcelWSheet = ExcelWBook.getSheet("invalidate");
+			ExcelWSheet = ExcelWBook.getSheet(SheetName);
 			CellStyle cellStyle = ExcelWSheet.getWorkbook().createCellStyle();
 			XSSFFont font = ExcelWSheet.getWorkbook().createFont();
 			font.setFontHeightInPoints((short) 16);
@@ -259,5 +267,4 @@ public class ExcelUtils {
 		}
 
 	}
-
 }
