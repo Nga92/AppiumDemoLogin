@@ -46,6 +46,4 @@ public class BaseClass {
 		elm.click();
 		runtime.exec(cmd);
 	}
-	public void 
-	
 }
