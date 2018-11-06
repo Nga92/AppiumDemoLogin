@@ -28,7 +28,7 @@ public class AbstractTest {
 		return driver;
 	}
 
-	   public int random() {
+	   public int randomNumber() {
 		   Random rand = new Random();
 		   int  number = rand.nextInt(999999) + 1;
 		   return number;

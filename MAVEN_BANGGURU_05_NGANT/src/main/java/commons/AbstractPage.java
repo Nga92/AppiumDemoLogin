@@ -17,14 +17,20 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.gargoylesoftware.htmlunit.javascript.background.JavaScriptExecutor;
 
-import page.objects.EditCustomerPageObject;
-import page.objects.HomePageObject;
-import page.objects.NewCustomerPageObject;
-import page.objects.PageFactoryManager;
-import page.objects.WithdrawPageObject;
-import page.ui.AbstractPageUI;
+import bank.pageObject.EditCustomerPageObject;
+import bank.pageObject.HomePageObject;
+import bank.pageObject.NewCustomerPageObject;
+import bank.pageObject.BankPageFactoryManager;
+import bank.pageObject.WithdrawPageObject;
+import bank.pageUIs.BankAbstractPageUI;
+import live.pageObject.LiveHomePageObject;
+import live.pageObject.LivePageFactoryManager;
+import live.pageObject.MyAccountPageObject;
+import live.pageObject.LiveRegisterPageObject;
+import live.pageUIs.LiveAbstractPageUI;
 
 public class AbstractPage {
+
 	// Web Browser
 	public void openAnyURL(WebDriver driver, String url) {
 		driver.get(url);
@@ -55,24 +61,29 @@ public class AbstractPage {
 		WebElement element = driver.findElement(By.xpath(xpath));
 		element.click();
 	}
-	// tinh da hinh 
-	public void clickToElement(WebDriver driver, String xpath,String... values) {
-		xpath=String.format(xpath,(Object[]) values);
+
+	// tinh da hinh
+	public void clickToElement(WebDriver driver, String xpath, String... values) {
+		xpath = String.format(xpath, (Object[]) values);
+		System.out.println(" ---- Click to dynamic  element : " + xpath+ "------");
 		WebElement element = driver.findElement(By.xpath(xpath));
 		element.click();
 	}
 
-	public void sendkyToElement(WebDriver driver, String xpath, String value) {
+	public void sendkyToElement(WebDriver driver, String xpath, String inputValue, String... values) {
+		xpath = String.format(xpath, (Object[]) values);
+		System.out.println(" ---- Sendky to dynamic  element : " + xpath+ "------");
 		WebElement element = driver.findElement(By.xpath(xpath));
 		element.clear();
-		element.sendKeys(value);
+		element.sendKeys(inputValue);
 	}
 
-	public void selectItemInDropdown(WebDriver driver, String xpath, String item,String...  values) {
-		xpath=String.format(xpath,(Object[]) values);
+	public void selectItemInDropdown(WebDriver driver, String xpath, String item, String... values) {
+		xpath = String.format(xpath, (Object[]) values);
 		Select select = new Select(driver.findElement(By.xpath(xpath)));
 		select.selectByVisibleText(item);
 	}
+
 	public void selectItemInDropdown(WebDriver driver, String xpath, String item) {
 		Select select = new Select(driver.findElement(By.xpath(xpath)));
 		select.selectByVisibleText(item);
@@ -104,22 +115,23 @@ public class AbstractPage {
 	public String getAttributeValue(WebDriver driver, String xpath, String attributeName) {
 		WebElement element = driver.findElement(By.xpath(xpath));
 		return element.getAttribute(attributeName);
-		
+
 	}
-	public String getAttributeValue(WebDriver driver, String xpath,String attributeName,String... values) {
-		xpath=String.format(xpath, (Object[]) values);
+
+	public String getAttributeValue(WebDriver driver, String xpath, String attributeName, String... values) {
+		xpath = String.format(xpath, (Object[]) values);
 		WebElement element = driver.findElement(By.xpath(xpath));
 		return element.getAttribute(attributeName);
 
 	}
-	
+
 	public String getTextElement(WebDriver driver, String xpath) {
 		WebElement element = driver.findElement(By.xpath(xpath));
 		return element.getText();
 	}
 
-	public String getTextElement(WebDriver driver, String xpath,String... values) {
-		xpath=String.format(xpath, (Object[]) values);
+	public String getTextElement(WebDriver driver, String xpath, String... values) {
+		xpath = String.format(xpath, (Object[]) values);
 		WebElement element = driver.findElement(By.xpath(xpath));
 		return element.getText();
 	}
@@ -135,8 +147,9 @@ public class AbstractPage {
 			element.click();
 		}
 	}
-	public void checkToCheckbox(WebDriver driver, String xpath,String... values) {
-		xpath=String.format(xpath,(Object[]) values);
+
+	public void checkToCheckbox(WebDriver driver, String xpath, String... values) {
+		xpath = String.format(xpath, (Object[]) values);
 		WebElement element = driver.findElement(By.xpath(xpath));
 		if (!element.isSelected()) {
 			element.click();
@@ -154,8 +167,9 @@ public class AbstractPage {
 		WebElement element = driver.findElement(By.xpath(xpath));
 		return element.isDisplayed();
 	}
-	public boolean isControlDisplayed(WebDriver driver, String xpath,String... values) {
-		xpath=String.format(xpath,(Object[]) values);
+
+	public boolean isControlDisplayed(WebDriver driver, String xpath, String... values) {
+		xpath = String.format(xpath, (Object[]) values);
 		WebElement element = driver.findElement(By.xpath(xpath));
 		return element.isDisplayed();
 	}
@@ -259,9 +273,10 @@ public class AbstractPage {
 		WebElement element = driver.findElement(By.xpath("//input[@type='file']"));
 		element.sendKeys(fileName);
 	}
+
 	public void uploadMultipleFileOneTime(WebDriver driver, String[] fileName) {
 		String proDir = System.getProperty("user.dir");
-		int i=fileName.length;
+		int i = fileName.length;
 		String filePath = proDir + "\\fileUpload\\" + fileName;
 		WebElement element = driver.findElement(By.xpath("//input[@type='file']"));
 		element.sendKeys(fileName);
@@ -272,10 +287,11 @@ public class AbstractPage {
 		WebElement element = driver.findElement(By.xpath(xpath));
 		WebDriverWait wait = new WebDriverWait(driver, timeout);
 		wait.until(ExpectedConditions.visibilityOf(element));
-		
+
 	}
-	public void waitForControlVisible(WebDriver driver, String xpath,String value) {
-		xpath=String.format(xpath, value);
+
+	public void waitForControlVisible(WebDriver driver, String xpath, String value) {
+		xpath = String.format(xpath, value);
 		WebElement element = driver.findElement(By.xpath(xpath));
 		WebDriverWait wait = new WebDriverWait(driver, timeout);
 		wait.until(ExpectedConditions.visibilityOf(element));
@@ -289,26 +305,66 @@ public class AbstractPage {
 
 	}
 
+	public AbstractPage openDynamic(WebDriver driver, String pageName) {
+		waitForControlVisible(driver, BankAbstractPageUI.DYNAMIC_PAGE_LINK, pageName);
+		clickToElement(driver, BankAbstractPageUI.DYNAMIC_PAGE_LINK, pageName);
+		switch (pageName) {
+		case "New Customer":
+			return new BankPageFactoryManager().openHomePage(driver);
+		case "Withdrawal":
+			return new BankPageFactoryManager().openWithdrawPage(driver);
+		case "Edit Customer":
+			return new BankPageFactoryManager().openEditPage(driver);
+		default:
+			return new BankPageFactoryManager().openHomePage(driver);
+		}
+	}
+
+	/* BANK GURU PAGEs */
+	public HomePageObject openHomePage(WebDriver driver) {
+		waitForControlVisible(driver, BankAbstractPageUI.DYNAMIC_PAGE_LINK, "Manager");
+		clickToElement(driver, BankAbstractPageUI.DYNAMIC_PAGE_LINK, "Manager");
+		return new BankPageFactoryManager().openHomePage(driver);
+	}
+
+	public NewCustomerPageObject openNewCustomerPage(WebDriver driver) {
+		waitForControlVisible(driver, BankAbstractPageUI.DYNAMIC_PAGE_LINK, "New Customer");
+		clickToElement(driver, BankAbstractPageUI.DYNAMIC_PAGE_LINK, "New Customer");
+		return new BankPageFactoryManager().openNewCustomerPage(driver);
+	}
+
+	public WithdrawPageObject openWithdrawPage(WebDriver driver) {
+		waitForControlVisible(driver, BankAbstractPageUI.DYNAMIC_PAGE_LINK, "Withdrawal");
+		clickToElement(driver, BankAbstractPageUI.DYNAMIC_PAGE_LINK, "Withdrawal");
+		return new BankPageFactoryManager().openWithdrawPage(driver);
+	}
+
+	public EditCustomerPageObject openEditCustomerPage(WebDriver driver) {
+		waitForControlVisible(driver, BankAbstractPageUI.DYNAMIC_PAGE_LINK, "Edit Customer");
+		clickToElement(driver, BankAbstractPageUI.DYNAMIC_PAGE_LINK, "Edit Customer");
+		return new BankPageFactoryManager().openEditPage(driver);
+	}
+
+	/* LIVE GURU PAGEs */
+	public MyAccountPageObject openMyAccountPage(WebDriver driver) {
+		waitForControlVisible(driver, LiveAbstractPageUI.DYNAMIC_FOOTER_LINK, "My Account");
+		clickToElement(driver, LiveAbstractPageUI.DYNAMIC_FOOTER_LINK, "My Account");
+		return new LivePageFactoryManager().getMyAccountPage(driver);
+	}
+
+	public void clickToDynamicButton(WebDriver driver, String titleName) {
+		waitForControlVisible(driver, LiveAbstractPageUI.DYNAMIC_BUTTON, titleName);
+		clickToElement(driver, LiveAbstractPageUI.DYNAMIC_BUTTON, titleName);
+	}
+	public void sendkyToDynamicTextbox(WebDriver driver,String textboxName ,String value) {
+		waitForControlVisible(driver, LiveAbstractPageUI.DYNAMIC_TEXTBOX_RADIO_CHECKBOX, textboxName);
+		sendkyToElement(driver, LiveAbstractPageUI.DYNAMIC_TEXTBOX_RADIO_CHECKBOX,value,textboxName);
+	}
+	public LiveHomePageObject openLogoutPage(WebDriver driver) {
+		clickToElement(driver, LiveAbstractPageUI.DYNAMIC_HEADER_LABEL_TEXT,"Account");
+		waitForControlVisible(driver, LiveAbstractPageUI.DYNAMIC_HEADER_LINK, "Log Out");
+		clickToElement(driver, LiveAbstractPageUI.DYNAMIC_HEADER_LINK, "Log Out");
+		return new LivePageFactoryManager().getHomePage(driver);
+	}
 	private int timeout = 30;
-	public HomePageObject openHomePage(WebDriver driver ) {
-		waitForControlVisible(driver, AbstractPageUI.DYNAMIC_PAGE_LINK,"Manager");
-		clickToElement(driver, AbstractPageUI.DYNAMIC_PAGE_LINK,"Manager");
-		return new PageFactoryManager().openHomePage(driver);
-	}
-	public NewCustomerPageObject openNewCustomerPage(WebDriver driver ) {
-		waitForControlVisible(driver, AbstractPageUI.DYNAMIC_PAGE_LINK,"New Customer");
-		clickToElement(driver, AbstractPageUI.DYNAMIC_PAGE_LINK,"New Customer");
-		return new PageFactoryManager().openNewCustomerPage(driver);
-	}
-	public WithdrawPageObject openWithdrawPage(WebDriver driver ) {
-		waitForControlVisible(driver, AbstractPageUI.DYNAMIC_PAGE_LINK,"Withdrawal");
-		clickToElement(driver, AbstractPageUI.DYNAMIC_PAGE_LINK,"Withdrawal");
-		return new PageFactoryManager().openWithdrawPage(driver);
-	}
-	public EditCustomerPageObject openEditCustomerPage(WebDriver driver ) {
-		waitForControlVisible(driver, AbstractPageUI.DYNAMIC_PAGE_LINK,"Edit Customer");
-		clickToElement(driver, AbstractPageUI.DYNAMIC_PAGE_LINK,"Edit Customer");
-		return new PageFactoryManager().openEditPage(driver);
-	}
-	
 }
